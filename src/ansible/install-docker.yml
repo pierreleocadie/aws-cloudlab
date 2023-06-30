@@ -1,0 +1,19 @@
+- name: Install Docker
+  hosts:
+    - cloudlab_public_facing_entrypoint
+    - cloudlab_public_app_projects_server
+    - cloudlab_internal_server_1
+    - cloudlab_internal_server_2
+  become: yes
+  tasks:
+    - name: Install Docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Compose
+      ansible.builtin.apt:
+        name: docker-compose
+        state: present
+        update_cache: yes

@@ -1,0 +1,51 @@
+version: "3.3"
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - TZ=Europe/Paris
+      - SERVERURL=wireguard.mondomaine.fr #optional
+      - SERVERPORT=51820 #optional
+      - LOG_CONFS=true #optional
+    volumes:
+      - /etc/wireguard:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 5000:5000
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.conf.all.proxy_arp=1
+      - net.ipv4.ip_forward=1
+    restart: always
+  
+  wireguard-ui:
+    image: ngoduykhanh/wireguard-ui:latest
+    container_name: wireguard-ui
+    depends_on:
+      - wireguard
+    cap_add:
+      - NET_ADMIN
+    network_mode: service:wireguard
+    environment:
+      - WGUI_LOG_LEVEL=DEBUG
+      - WGUI_USERNAME=admin
+      - WGUI_PASSWORD=admin
+      - WGUI_MANAGE_START=true
+      - WGUI_MANAGE_RESTART=true
+      - WGUI_DNS=10.0.2.11
+      - WGUI_TABLE=off
+      - WGUI_SERVER_INTERFACE_ADDRESSES=192.168.2.0/24
+      - WGUI_DEFAULT_CLIENT_ALLOWED_IPS=172.0.0.0/8,10.0.0.0/16,13.37.148.174/32
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    volumes:
+      - /root/wgui/db:/app/db
+      - /etc/wireguard:/etc/wireguard
+    restart: always

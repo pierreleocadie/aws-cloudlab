@@ -1,0 +1,19 @@
+- name: Install Portainer on CloudLab Internal Server 1
+  hosts: cloudlab_internal_server_1
+  become: yes
+  tasks:
+    - name: Copy Docker Compose file for Portainer
+      ansible.builtin.copy:
+        src: ../docker/docker-compose-portainer.yml
+        dest: /home/admin/docker-compose-portainer.yml
+
+    - name: Create the portainer data directory
+      ansible.builtin.file:
+        path: /home/admin/portainer_data
+        state: directory
+        group: admin
+        owner: admin
+
+    - name: Start portainer container
+      ansible.builtin.command:
+        cmd: docker-compose -f /home/admin/docker-compose-portainer.yml up -d

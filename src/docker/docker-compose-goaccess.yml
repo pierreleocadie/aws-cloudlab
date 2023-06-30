@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+    goaccess:
+        image: 'xavierh/goaccess-for-nginxproxymanager:latest'
+        container_name: goaccess
+        restart: always
+        ports:
+            - '7880:7880'
+        environment:
+            - TZ=Europe/Paris         
+            - SKIP_ARCHIVED_LOGS=False #optional
+            - DEBUG=False #optional
+            - BASIC_AUTH=True #optional
+            - BASIC_AUTH_USERNAME=admin #optional
+            - BASIC_AUTH_PASSWORD=admin #optional   
+            - EXCLUDE_IPS=127.0.0.1 #optional - comma delimited 
+            - LOG_TYPE=NPM #optional - more information below
+        volumes:
+        - /your/path/to/logs:/opt/log

@@ -1,0 +1,10 @@
+- name: Install Portainer agent
+  hosts:
+    - cloudlab_public_facing_entrypoint
+    - cloudlab_public_app_projects_server
+    - cloudlab_internal_server_2
+  become: yes
+  tasks:
+    - name: Deploy and run container for Portainer agent
+      ansible.builtin.command:
+        cmd: docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent:2.18.1
